@@ -209,6 +209,16 @@
   <ItemGroup>
     <Content Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\OSPasteBin.BusinessObjects\OSPasteBin.BusinessObjects.csproj">
+      <Project>{ca3565ff-aace-40e3-940f-e5c7be581f72}</Project>
+      <Name>OSPasteBin.BusinessObjects</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\OSPasteBin.DAL\OSPasteBin.DAL.csproj">
+      <Project>{7cff3559-e9d2-4fd6-8ade-c404e4b1cb03}</Project>
+      <Name>OSPasteBin.DAL</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
