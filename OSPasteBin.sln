@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPasteBin.Web", "OSPasteBin\OSPasteBin.Web.csproj", "{BBA106AC-5455-4769-90FD-A86B1DF5FCDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPasteBin.BusinessObjects", "OSPasteBin.BusinessObjects\OSPasteBin.BusinessObjects.csproj", "{CA3565FF-AACE-40E3-940F-E5C7BE581F72}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BBA106AC-5455-4769-90FD-A86B1DF5FCDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBA106AC-5455-4769-90FD-A86B1DF5FCDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBA106AC-5455-4769-90FD-A86B1DF5FCDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBA106AC-5455-4769-90FD-A86B1DF5FCDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA3565FF-AACE-40E3-940F-E5C7BE581F72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA3565FF-AACE-40E3-940F-E5C7BE581F72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA3565FF-AACE-40E3-940F-E5C7BE581F72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA3565FF-AACE-40E3-940F-E5C7BE581F72}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
