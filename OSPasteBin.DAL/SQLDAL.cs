@@ -13,15 +13,36 @@ namespace OSPasteBin.DAL
         private string _connectionString;
 
         #region CTOR
-        public SQLDAL()
+        public SQLDAL(string connectionString)
         {
+            _connectionString = connectionString;
         }
 
         #endregion
 
-        public IDataReader ExecuteReader(SqlCommand command)
+
+        public IDataReader ExecuteQuery(string procedureName, List<SqlParameter> procedureParameters)
         {
-            throw new NotImplementedException();
+            SqlConnection connection = new SqlConnection(_connectionString);
+            SqlCommand procedure = new SqlCommand(procedureName, connection);
+            procedure.CommandType = CommandType.StoredProcedure;
+
+            foreach (SqlParameter procParam in procedureParameters)
+                procedure.Parameters.Add(procParam);
+
+            try
+            {
+                connection.Open();
+                IDataReader reader = procedure.ExecuteReader(CommandBehavior.CloseConnection);
+                return reader;
+            }
+            catch
+            {
+                // Close open resources
+                if (procedure != null) procedure.Dispose();
+                if (connection != null) connection.Close();
+                throw;
+            }
         }
     }
 }
