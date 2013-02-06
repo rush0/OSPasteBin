@@ -14,7 +14,7 @@ namespace OSPasteBin.Controllers
     public class PasteNoteController : Controller
     {
         private IPasteBinDAL _dal;
-        private const string _connectionStringName = "";
+        private const string _connectionStringName = "OSPasteBinConnection";
         
         #region CTOR
 
@@ -23,7 +23,6 @@ namespace OSPasteBin.Controllers
             _dal = new PasteBinSqlDAL( ConfigurationManager.ConnectionStrings[_connectionStringName].ConnectionString );
         }
         #endregion
-
 
         [HttpGet]
         public ActionResult Index(int id)
@@ -42,8 +41,10 @@ namespace OSPasteBin.Controllers
         public ActionResult New(PasteNote pasteNote)
         {
             if (ModelState.IsValid)
-                RedirectToAction("Index", new { id = pasteNote.Id });
-
+            {
+                PasteNote newNote = _dal.AddPostNote(pasteNote);
+                RedirectToAction("Index", new { id = newNote.Id });
+            }
             return View();
         }
 

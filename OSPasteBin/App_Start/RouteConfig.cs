@@ -15,8 +15,8 @@ namespace OSPasteBin
 
             routes.MapRoute(
                 name: "Default",
-                url: "{id}/{mode}",
-                defaults: new { controller = "Home", action = "Index", mode = UrlParameter.Optional }
+                url: "{controller}/{action}/{id}",
+                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
             );
         }
     }

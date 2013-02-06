@@ -44,5 +44,26 @@ namespace OSPasteBin.DAL
                 throw;
             }
         }
+
+        public IDataReader ExecuteQuery(string procedureName)
+        {
+            SqlConnection connection = new SqlConnection(_connectionString);
+            SqlCommand procedure = new SqlCommand(procedureName, connection);
+            procedure.CommandType = CommandType.StoredProcedure;
+
+            try
+            {
+                connection.Open();
+                IDataReader reader = procedure.ExecuteReader(CommandBehavior.CloseConnection);
+                return reader;
+            }
+            catch
+            {
+                // Close open resources
+                if (procedure != null) procedure.Dispose();
+                if (connection != null) connection.Close();
+                throw;
+            }
+        }
     }
 }

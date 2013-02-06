@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = "New";
+}
+
+<h2>New</h2>
+
+
+@using (Html.BeginForm("New", "PasteNote")) {
+    @Html.ValidationSummary(true)
+
+    @Html.Partial("PasteNoteNewEditForm");
+    
+    
+    <p>
+        <input type="submit" value="Save" />
+    </p>
+    
+}

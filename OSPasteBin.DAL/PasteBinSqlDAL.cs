@@ -13,9 +13,13 @@ namespace OSPasteBin.DAL
     {
         private SQLDAL _sqlDal;
 
-        private const string _getPasteNoteParameterName = "";
-        private const string _removePasteNoteParameterName = "";
-        private const string _getRecentPasteNotesParameterName = "";
+        private const string _getPasteNoteProcedureName = "GetPasteNote";
+        private const string _addPasteNoteProcedureName = "AddPasteNote";
+        private const string _removePasteNoteProcedureName = "RemovePasteNote";
+        private const string _getRecentPasteNotesProcedureName = "GetRecentPasteNotes";
+        private const string _getPasteNotesForUserProcedureName = "GetUserPasteNotesS";
+        private string _getAllPasteNotesProcedureName = "GetAllPasteNotes";
+
 
         #region CTOR
         public PasteBinSqlDAL(string connectionString)
@@ -30,27 +34,46 @@ namespace OSPasteBin.DAL
             List<SqlParameter> procedureParameters = new List<SqlParameter>();
             procedureParameters.Add(new SqlParameter("@Id", id));
 
-            using(IDataReader reader = _sqlDal.ExecuteQuery(_getPasteNoteParameterName, procedureParameters))
-	        {
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_getPasteNoteProcedureName, procedureParameters))
+            {
                 while (reader.Read())
-	            {
-                    note = new PasteNote{
-                         Id = (int)reader[0],
-                         Title = (string)reader[1],
-                         Description = (string)reader[2],
-                         Language = (string)reader[3],
-                         Post = (string)reader[4],
-                         UserId = (int)reader[5]
+                {
+                    note = new PasteNote
+                    {
+                        Id = (int)reader[0],
+                        Title = (string)reader[1],
+                        Description = (string)reader[2],
+                        Language = (string)reader[3],
+                        Post = (string)reader[4],
+                        UserId = (int)reader[5]
                     };
-	            }
-	        }
+                }
+            }
 
             return note;
         }
 
         public IEnumerable<PasteNote> GetAllPasteNotes()
         {
-            throw new NotImplementedException();
+            List<PasteNote> notes = new List<PasteNote>();
+
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_getAllPasteNotesProcedureName))
+            {
+                while (reader.Read())
+                {
+                    notes.Add(new PasteNote
+                    {
+                        Id = (int)reader[0],
+                        Title = (string)reader[1],
+                        Description = (string)reader[2],
+                        Language = (string)reader[3],
+                        Post = (string)reader[4],
+                        UserId = (int)reader[5]
+                    });
+                }
+            }
+
+            return notes;
         }
 
         public IEnumerable<PasteNote> GetRecentPasteNotes(DateTime starting)
@@ -60,7 +83,47 @@ namespace OSPasteBin.DAL
 
         public bool RemovePasteNote(int id)
         {
-            throw new NotImplementedException();
+            bool success = false;
+            if (id != null && id >= 0)
+            {
+                List<SqlParameter> procedureParameters = new List<SqlParameter>();
+                procedureParameters.Add(new SqlParameter("@Id", id));
+
+                using (IDataReader reader = _sqlDal.ExecuteQuery(_removePasteNoteProcedureName, procedureParameters))
+                {
+                    success = reader.RecordsAffected > 0;
+                }
+            }
+            return success;
+        }
+
+
+        public PasteNote AddPostNote(PasteNote newNote)
+        {
+            PasteNote note = null;
+            List<SqlParameter> procedureParameters = new List<SqlParameter>();
+            procedureParameters.Add(new SqlParameter("@Title", newNote.Title));
+            procedureParameters.Add(new SqlParameter("@Description", newNote.Description));
+            procedureParameters.Add(new SqlParameter("@Post", newNote.Post));
+            procedureParameters.Add(new SqlParameter("@Language", newNote.Language));
+
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_addPasteNoteProcedureName, procedureParameters))
+            {
+                while (reader.Read())
+                {
+                    note = new PasteNote
+                    {
+                        Id = (int)reader[0],
+                        Title = (string)reader[1],
+                        Description = (string)reader[2],
+                        Language = (string)reader[3],
+                        Post = (string)reader[4],
+                        UserId = (int)reader[5]
+                    };
+                }
+            }
+            return note;
+
         }
     }
 }

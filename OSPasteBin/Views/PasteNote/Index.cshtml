@@ -1,0 +1,13 @@
+﻿@model OSPasteBin.BusinessObjects.PasteNote
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>@Model.Title</h2>
+
+<p>@Model.Description</p>
+
+<pre>
+    @Model.Post
+</pre>
