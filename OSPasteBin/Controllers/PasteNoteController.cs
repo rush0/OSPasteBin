@@ -15,20 +15,51 @@ namespace OSPasteBin.Controllers
     {
         private IPasteBinDAL _dal;
         private const string _connectionStringName = "OSPasteBinConnection";
-        
+
         #region CTOR
 
         public PasteNoteController()
         {
-            _dal = new PasteBinSqlDAL( ConfigurationManager.ConnectionStrings[_connectionStringName].ConnectionString );
+            _dal = new PasteBinSqlDAL(ConfigurationManager.ConnectionStrings[_connectionStringName].ConnectionString);
         }
         #endregion
 
+
         [HttpGet]
-        public ActionResult Index(int id)
+        public ActionResult Index()
         {
-            var pasteNote = _dal.GetPasteNote(id);
-            return View(pasteNote);
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult Notes(int id, string mode)
+        {
+            PasteNote pasteNote = _dal.GetPasteNote(id);
+
+
+            if (pasteNote == null)
+                return View("NotFound");
+
+            if (String.Equals(mode, "Raw", StringComparison.CurrentCultureIgnoreCase))
+                return View("Raw", pasteNote);
+
+
+            return View("Note", pasteNote);
+        }
+
+
+        [HttpGet]
+        public ActionResult MyNotes()
+        {
+            if (User.Identity.IsAuthenticated)
+            {
+                string userName = User.Identity.Name;
+                var userNotes = _dal.GetPasteNotesForUser(userName);
+                return View("UserNotes", userNotes);
+            }
+            else
+                return RedirectToAction("Login", "Account");
+
         }
 
         [HttpGet]
@@ -38,15 +69,18 @@ namespace OSPasteBin.Controllers
         }
 
         [HttpPost]
+        [ValidateInput(false)]
         public ActionResult New(PasteNote pasteNote)
         {
-            if (ModelState.IsValid)
-            {
-                PasteNote newNote = _dal.AddPostNote(pasteNote);
-                RedirectToAction("Index", new { id = newNote.Id });
-            }
-            return View();
-        }
+            pasteNote.Post = HttpUtility.HtmlEncode(pasteNote.Post);
 
+            if (User.Identity.IsAuthenticated)
+                pasteNote.UserName = User.Identity.Name;
+            else
+                pasteNote.UserName = string.Empty;
+
+            PasteNote newNote = _dal.AddPostNote(pasteNote);
+            return RedirectToAction("Notes", new { id = newNote.Id });
+        }
     }
 }

@@ -8,8 +8,7 @@
 @using (Html.BeginForm("New", "PasteNote")) {
     @Html.ValidationSummary(true)
 
-    @Html.Partial("PasteNoteNewEditForm");
-    
+    @Html.Partial("PasteNoteNewEditForm")
     
     <p>
         <input type="submit" value="Save" />

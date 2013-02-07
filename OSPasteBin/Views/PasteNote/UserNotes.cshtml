@@ -1,0 +1,17 @@
+﻿@model IEnumerable<OSPasteBin.BusinessObjects.PasteNote>
+
+@{
+    ViewBag.Title = "UserNotes";
+}
+
+<h2>Notes for @User.Identity.Name</h2>
+
+
+<ul class="post-listing">
+@foreach (var note in Model)
+{
+    <li>
+        @Html.ActionLink(@note.Title, "Notes", new { id = @note.Id })
+    </li>
+}
+</ul>

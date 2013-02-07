@@ -13,6 +13,6 @@ namespace OSPasteBin.BusinessObjects
         public string Description { get; set; }
         public string Post { get; set; }
         public string Language { get; set; }
-        public int UserId { get; set; }
+        public string UserName { get; set; }
     }
 }

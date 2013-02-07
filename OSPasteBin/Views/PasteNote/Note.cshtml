@@ -1,0 +1,15 @@
+﻿@model OSPasteBin.BusinessObjects.PasteNote
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>@Model.Title</h2>
+
+<p>@Model.Description</p>
+
+<pre>
+  @HttpUtility.HtmlDecode( @Model.Post )
+</pre>
+
+@Html.ActionLink("View Raw", "Notes", new { id = @Model.Id , mode = "Raw" })

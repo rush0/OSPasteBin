@@ -13,11 +13,28 @@ namespace OSPasteBin
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+
+            routes.MapRoute(
+                name: "Account",
+                url: "Account/{action}",
+                defaults: new { controller = "Account", action = "Login" }
+            );
+
+            routes.MapRoute(
+                name: "PasteNotes",
+                url: "{action}/{id}/{mode}",
+                defaults: new { controller = "PasteNote", action = "Index", id = UrlParameter.Optional, mode = UrlParameter.Optional },
+                constraints: new { id = @"\d+"}
+            );
+
+
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "PasteNote", action = "Index",  id = UrlParameter.Optional }
             );
+
+
         }
     }
 }
