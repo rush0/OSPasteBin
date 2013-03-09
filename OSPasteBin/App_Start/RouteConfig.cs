@@ -13,6 +13,11 @@ namespace OSPasteBin
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");
 
+            routes.MapRoute(
+                name: "NewPost",
+                url: "New",
+                defaults: new { controller = "PasteNote", action="New" }
+                );
 
             routes.MapRoute(
                 name: "Account",

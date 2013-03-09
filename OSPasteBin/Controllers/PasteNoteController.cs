@@ -13,6 +13,7 @@ namespace OSPasteBin.Controllers
 {
     public class PasteNoteController : Controller
     {
+
         private IPasteBinDAL _dal;
         private const string _connectionStringName = "OSPasteBinConnection";
 
@@ -78,6 +79,12 @@ namespace OSPasteBin.Controllers
                 pasteNote.UserName = User.Identity.Name;
             else
                 pasteNote.UserName = string.Empty;
+
+            if (String.IsNullOrEmpty(pasteNote.Title))
+                pasteNote.Title = string.Empty;
+
+            if (String.IsNullOrEmpty(pasteNote.Description))
+                pasteNote.Description = string.Empty;
 
             PasteNote newNote = _dal.AddPostNote(pasteNote);
             return RedirectToAction("Notes", new { id = newNote.Id });

@@ -1,5 +1,6 @@
 ﻿@model OSPasteBin.BusinessObjects.PasteNote
 
+
 <div class="input">
         @Html.HiddenFor(model => model.Id)
 
@@ -31,6 +32,6 @@
             @Html.LabelFor(model => model.Language)
         </div>
         <div>
-            @Html.EditorFor(model => model.Language)
+            @Html.DropDownListFor(model => model.Language, new SelectList(OSPasteBin.Models.NewNoteViewModel.Languages, "Value", "Text"))
         </div>
  </div>

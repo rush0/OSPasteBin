@@ -8,8 +8,13 @@
 
 <p>@Model.Description</p>
 
-<pre>
-  @HttpUtility.HtmlDecode( @Model.Post )
-</pre>
+<pre><code class="prettyprint lang-@Model.Language">@HttpUtility.HtmlDecode( @Model.Post )</code></pre>
 
 @Html.ActionLink("View Raw", "Notes", new { id = @Model.Id , mode = "Raw" })
+
+
+@section scripts{
+<script type="text/javascript">
+    prettyPrint();
+</script>
+}
