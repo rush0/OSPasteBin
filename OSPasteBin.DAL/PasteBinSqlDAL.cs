@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace OSPasteBin.DAL
 {
+    /// <summary>
+    /// MSSQL Data Access Layer for PasteBin Application.
+    /// </summary>
     public class PasteBinSqlDAL : IPasteBinDAL
     {
         
@@ -19,7 +22,8 @@ namespace OSPasteBin.DAL
         private const string _removePasteNoteProcedureName = "RemovePasteNote";
         private const string _getRecentPasteNotesProcedureName = "GetRecentPasteNotes";
         private const string _getPasteNotesForUserProcedureName = "GetUserPasteNotes";
-        private string _getAllPasteNotesProcedureName = "GetAllPasteNotes"; 
+        private const string _getAllPasteNotesProcedureName = "GetAllPasteNotes";
+        private const string _getPasteNotesWithKeywordProcedureName = "GetKeywordPasteNotes";
         #endregion
 
         #region CTOR
@@ -30,6 +34,12 @@ namespace OSPasteBin.DAL
         #endregion
 
         #region Methods - Public
+
+        /// <summary>
+        /// Get a <see cref="PasteNote"/> by its id.
+        /// </summary>
+        /// <param name="id"><see cref="PasteNote"/> id</param>
+        /// <returns><see cref="PasteNote"/> with specified id</returns>
         public PasteNote GetPasteNote(int id)
         {
             PasteNote note = null;
@@ -55,6 +65,11 @@ namespace OSPasteBin.DAL
             return note;
         }
 
+        /// <summary>
+        /// Returns a list of <see cref="PasteNote"/>s created by logged-in user.
+        /// </summary>
+        /// <param name="username">Logged in user's name</param>
+        /// <returns>List of User's <see cref="PasteNote"/>s</returns>
         public IEnumerable<PasteNote> GetPasteNotesForUser(string username)
         {
             List<PasteNote> notes = new List<PasteNote>();
@@ -80,6 +95,10 @@ namespace OSPasteBin.DAL
             return notes;
         }
 
+        /// <summary>
+        /// Returns all PasteNotes in the Database Table.
+        /// </summary>
+        /// <returns>List of PasteNotes</returns>
         public IEnumerable<PasteNote> GetAllPasteNotes()
         {
             List<PasteNote> notes = new List<PasteNote>();
@@ -103,6 +122,11 @@ namespace OSPasteBin.DAL
             return notes;
         }
 
+        /// <summary>
+        /// Get <see cref="PasteNote"/>s created after the specified date.
+        /// </summary>
+        /// <param name="starting">Start Date</param>
+        /// <returns>A List of <see cref="PasteNote"/>s</returns>
         public IEnumerable<PasteNote> GetRecentPasteNotes(DateTime starting)
         {
             List<PasteNote> notes = new List<PasteNote>();
@@ -129,6 +153,11 @@ namespace OSPasteBin.DAL
             return notes;
         }
 
+        /// <summary>
+        /// Remove <see cref="PasteNote"/> with specified id.
+        /// </summary>
+        /// <param name="id"><see cref="PasteNote"/> id</param>
+        /// <returns>True if a note was successfully deleted.</returns>
         public bool RemovePasteNote(int id)
         {
             bool success = false;
@@ -145,6 +174,11 @@ namespace OSPasteBin.DAL
             return success;
         }
 
+        /// <summary>
+        /// Add new <see cref="PasteNote"/> to DataBase
+        /// </summary>
+        /// <param name="newNote"><see cref="PasteNote"/> to submit</param>
+        /// <returns>Returns submitted <see cref="PasteNote"/></returns>
         public PasteNote AddPostNote(PasteNote newNote)
         {
             PasteNote note = null;
@@ -172,6 +206,37 @@ namespace OSPasteBin.DAL
             }
             return note;
         } 
+
         #endregion
+
+        /// <summary>
+        /// Retrieves <see cref="PasteNote"/>s containing keyword in title, description or tags.
+        /// </summary>
+        /// <param name="keyword">Keyword to search for</param>
+        /// <returns>List of <see cref="PasteNote"/>s containing keyword.</returns>
+        public IEnumerable<PasteNote> GetPasteNotesWithKeyWord(string keyword)
+        {
+            List<PasteNote> notes = new List<PasteNote>();
+            List<SqlParameter> procedureParameters = new List<SqlParameter>();
+            procedureParameters.Add(new SqlParameter("@Keyword", keyword));
+
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_getPasteNotesWithKeywordProcedureName, procedureParameters))
+            {
+                while (reader.Read())
+                {
+                    notes.Add(new PasteNote
+                    {
+                        Id = (int)reader[0],
+                        Title = (string)reader[1],
+                        Description = (string)reader[2],
+                        Language = (string)reader[3],
+                        Post = (string)reader[4],
+                        UserName = (string)reader[5]
+                    });
+                }
+            }
+
+            return notes;
+        }
     }
 }

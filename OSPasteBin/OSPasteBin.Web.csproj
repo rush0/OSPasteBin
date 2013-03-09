@@ -173,6 +173,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\prettify.css" />
+    <Content Include="Error\404.htm" />
+    <Content Include="Error\500.htm" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Properties\PublishProfiles\a.pubxml" />
@@ -210,6 +212,7 @@
     <Content Include="Views\PasteNote\Raw.cshtml" />
     <Content Include="Views\PasteNote\UserNotes.cshtml" />
     <Content Include="Views\PasteNote\Index.cshtml" />
+    <Content Include="Views\PasteNote\TaggedNotes.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

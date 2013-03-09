@@ -11,6 +11,9 @@ using System.Configuration;
 
 namespace OSPasteBin.Controllers
 {
+    /// <summary>
+    /// Process all PasteNote Actions
+    /// </summary>
     public class PasteNoteController : Controller
     {
 
@@ -25,13 +28,13 @@ namespace OSPasteBin.Controllers
         }
         #endregion
 
-
-        [HttpGet]
-        public ActionResult Index()
-        {
-            return View();
-        }
-
+        #region Actions - GET
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="id"><see cref="PasteNote"/> id.</param>
+        /// <param name="mode">View Mode. Raw for raw text, omit for normal display.</param>
+        /// <returns></returns>
         [HttpGet]
         public ActionResult Notes(int id, string mode)
         {
@@ -48,7 +51,10 @@ namespace OSPasteBin.Controllers
             return View("Note", pasteNote);
         }
 
-
+        /// <summary>
+        /// Get logged in user's notes
+        /// </summary>
+        /// <returns>A view of a list of the logged in user's notes.</returns>
         [HttpGet]
         public ActionResult MyNotes()
         {
@@ -63,12 +69,33 @@ namespace OSPasteBin.Controllers
 
         }
 
+        /// <summary>
+        /// Returns <see cref="PasteNote"/> Tagged with KeyWord
+        /// </summary>
+        /// <param name="keyword">Search Keyword</param>
+        /// <returns>View - Listing of Tagged <see cref="PasteNote"/>s</returns>
+        [HttpGet]
+        public ActionResult TaggedNotes(string keyword)
+        {
+            ViewBag.keyword = keyword;
+            return View(_dal.GetPasteNotesWithKeyWord(keyword));
+        }
+
+        /// <summary>
+        /// New Note Entry Form
+        /// </summary>
         [HttpGet]
         public ActionResult New()
         {
             return View();
-        }
+        } 
+        #endregion
 
+        #region Actions - POST
+        /// <summary>
+        /// Submits a new Note to the DAL
+        /// </summary>
+        /// <param name="pasteNote"><see cref="PasteNote"/> to be submitted.</param>
         [HttpPost]
         [ValidateInput(false)]
         public ActionResult New(PasteNote pasteNote)
@@ -88,6 +115,7 @@ namespace OSPasteBin.Controllers
 
             PasteNote newNote = _dal.AddPostNote(pasteNote);
             return RedirectToAction("Notes", new { id = newNote.Id });
-        }
+        } 
+        #endregion
     }
 }
