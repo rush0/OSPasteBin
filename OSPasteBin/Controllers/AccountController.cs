@@ -81,7 +81,7 @@ namespace OSPasteBin.Controllers
                 {
                     WebSecurity.CreateUserAndAccount(model.UserName, model.Password);
                     WebSecurity.Login(model.UserName, model.Password);
-                    return RedirectToAction("Index", "PasteNote", null);
+                    return RedirectToAction("New", "PasteNote", null);
                 }
                 catch (MembershipCreateUserException e)
                 {
@@ -337,7 +337,7 @@ namespace OSPasteBin.Controllers
             }
             else
             {
-                return RedirectToAction("Index", "PasteNote", null);
+                return RedirectToAction("New", "PasteNote", null);
             }
         }
 
