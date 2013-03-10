@@ -40,6 +40,9 @@ ul#menu {
     float:right;
 }
 
+#login li{
+    padding-left:15px;
+}
 .ribbon {
     height:40px;
     background:#000;
