@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace OSPasteBin.DAL
 {
     /// <summary>
@@ -14,9 +15,24 @@ namespace OSPasteBin.DAL
     /// </summary>
     public class PasteBinSqlDAL : IPasteBinDAL
     {
-        
+
+        #region DBColumns
+        private const string _columnId = "Id";
+        private const string _columnTitle = "Title";
+        private const string _columnDescription = "Description";
+        private const string _columnLanguage = "Language";
+        private const string _columnPost = "Post";
+        private const string _columnUsername = "Username";
+        private const string _columnCreated = "Created";
+        private const string _columnTagName = "Title";
+        private const string _columnNoteTagId = "NoteId";
+        private const string _columnNoteTagName = "Tag";
+
+        #endregion
+
         #region Fields - Private
         private SQLDAL _sqlDal;
+        private const string _noteTagsTableName = "NoteTags";
         private const string _getPasteNoteProcedureName = "GetPasteNote";
         private const string _addPasteNoteProcedureName = "AddPasteNote";
         private const string _removePasteNoteProcedureName = "RemovePasteNote";
@@ -24,6 +40,9 @@ namespace OSPasteBin.DAL
         private const string _getPasteNotesForUserProcedureName = "GetUserPasteNotes";
         private const string _getAllPasteNotesProcedureName = "GetAllPasteNotes";
         private const string _getPasteNotesWithKeywordProcedureName = "GetKeywordPasteNotes";
+        private const string _getAllTagsProcedureName = "GetTags";
+        private const string _getTagsForNoteProcedureName = "GetTagsByNoteId";
+        private const string _addTagsForNoteProcedureName = "AddTagsForNote";
         #endregion
 
         #region CTOR
@@ -50,15 +69,7 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    note = new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    };
+                    note = GetPasteNoteFromReader(reader);
                 }
             }
 
@@ -80,15 +91,7 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    notes.Add(new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    });
+                    notes.Add(GetPasteNoteFromReader(reader));
                 }
             }
 
@@ -107,15 +110,7 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    notes.Add(new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    });
+                    notes.Add(GetPasteNoteFromReader(reader));
                 }
             }
 
@@ -138,15 +133,7 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    notes.Add(new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    });
+                    notes.Add(GetPasteNoteFromReader(reader));
                 }
             }
 
@@ -179,7 +166,7 @@ namespace OSPasteBin.DAL
         /// </summary>
         /// <param name="newNote"><see cref="PasteNote"/> to submit</param>
         /// <returns>Returns submitted <see cref="PasteNote"/></returns>
-        public PasteNote AddPostNote(PasteNote newNote)
+        public PasteNote AddPasteNote(PasteNote newNote)
         {
             PasteNote note = null;
             List<SqlParameter> procedureParameters = new List<SqlParameter>();
@@ -193,21 +180,12 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    note = new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    };
+                    note = GetPasteNoteFromReader(reader);
                 }
             }
-            return note;
-        } 
 
-        #endregion
+            return note;
+        }
 
         /// <summary>
         /// Retrieves <see cref="PasteNote"/>s containing keyword in title, description or tags.
@@ -224,19 +202,126 @@ namespace OSPasteBin.DAL
             {
                 while (reader.Read())
                 {
-                    notes.Add(new PasteNote
-                    {
-                        Id = (int)reader[0],
-                        Title = (string)reader[1],
-                        Description = (string)reader[2],
-                        Language = (string)reader[3],
-                        Post = (string)reader[4],
-                        UserName = (string)reader[5]
-                    });
+                    notes.Add(GetPasteNoteFromReader(reader));
                 }
             }
 
             return notes;
         }
+
+        // Tags
+
+        /// <summary>
+        /// Returns a list of <see cref="Tag"/>s.
+        /// </summary>
+        /// <returns>List of User's <see cref="PasteNote"/>s</returns>
+        public IEnumerable<Tag> GetTags()
+        {
+            List<Tag> tags = new List<Tag>();
+
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_getAllTagsProcedureName))
+            {
+                while (reader.Read())
+                {
+                    tags.Add(new Tag { Name = reader.GetString(reader.GetOrdinal(_columnTagName)) });
+                }
+            }
+
+            return tags;
+        }
+
+        /// <summary>
+        /// Returns a list of <see cref="Tag"/>s.
+        /// </summary>
+        /// <returns>List of User's <see cref="PasteNote"/>s</returns>
+        public IEnumerable<Tag> GetTagsForNote(int noteId)
+        {
+            List<Tag> tags = new List<Tag>();
+            List<SqlParameter> procedureParameters = new List<SqlParameter>();
+            procedureParameters.Add(new SqlParameter("@NoteId", noteId));
+
+            using (IDataReader reader = _sqlDal.ExecuteQuery(_getTagsForNoteProcedureName, procedureParameters))
+            {
+                while (reader.Read())
+                {
+                    tags.Add(new Tag { Name = reader.GetString(reader.GetOrdinal(_columnNoteTagName)) });
+                }
+            }
+
+            return tags;
+        }
+
+        /// <summary>
+        /// Submit Tags for Note Id
+        /// This will batch upload several rows to the NoteTag Table.
+        /// </summary>
+        /// <param name="noteId"><see cref="PasteNote"/> Id associated with Tags</param>
+        /// <returns>Returns true if the tags were successfull inserted into the database.</returns>
+        public bool AddTagsForNote(int noteId, List<Tag> noteTags)
+        {
+
+            return
+                _sqlDal.ExecuteBulkCopy(
+                            ConstructTagDataTable(noteId, noteTags),
+                            _noteTagsTableName);
+        }
+
+        #endregion
+
+        #region Utils
+
+        /// <summary>
+        /// Generate a new PasteNote using a Sql Reader
+        /// Utility because this shouldn't be part of the Object Constructor
+        /// </summary>
+        /// <param name="reader">Sql Data Reader</param>
+        /// <returns>A new <see cref="PasteNote"/></returns>
+        private PasteNote GetPasteNoteFromReader(IDataReader reader)
+        {
+            int noteId = Convert.ToInt32(reader[reader.GetOrdinal(_columnId)]);
+            reader.SafeGetString(4);
+            return
+                new PasteNote
+                {
+                    Id = noteId,
+                    Title = reader.SafeGetString(reader.GetOrdinal(_columnTitle)),
+                    Description = reader.SafeGetString(reader.GetOrdinal(_columnDescription)),
+                    Language = reader.SafeGetString(reader.GetOrdinal(_columnLanguage)),
+                    Post = reader.SafeGetString(reader.GetOrdinal(_columnPost)),
+                    UserName = reader.SafeGetString(reader.GetOrdinal(_columnUsername)),
+                    Tags = GetTagsForNote(noteId).ToList<Tag>()
+                };
+        }
+
+        /// <summary>
+        /// Converts a List of <see cref="Tag"/>s to a DataTable
+        /// DataTable columns are "ID" and "Name"
+        /// </summary>
+        /// <param name="noteId"><see cref="PasteNote"/>Id</param>
+        /// <param name="noteTags">List of <see cref="Tag"/>s</param>
+        /// <returns></returns>
+        private DataTable ConstructTagDataTable(int noteId, List<Tag> noteTags)
+        {
+            DataTable noteTagsTable = new DataTable();
+            noteTagsTable.Columns.Add(_columnNoteTagId, typeof(int));
+            noteTagsTable.Columns.Add(_columnNoteTagName, typeof(string));
+
+            foreach (Tag noteTag in noteTags)
+            {
+                DataRow row = noteTagsTable.NewRow();
+                row[_columnNoteTagId] = noteId;
+                row[_columnNoteTagName] = noteTag.Name;
+                noteTagsTable.Rows.Add(row);
+            }
+
+            return noteTagsTable;
+        }
+
+        #endregion
+
+
+
     }
+
+
 }

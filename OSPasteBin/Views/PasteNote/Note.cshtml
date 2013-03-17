@@ -1,20 +1,35 @@
-﻿@model OSPasteBin.BusinessObjects.PasteNote
+﻿@model OSPasteBin.Models.ViewModels.NoteViewModel
 
 @{
     ViewBag.Title = "Index";
 }
 
-<h2>@Model.Title</h2>
+<h2>@Model.PasteNote.Title</h2>
 
-<p>@Model.Description</p>
+<p>@Model.PasteNote.Description</p>
 
-<pre><code class="prettyprint lang-@Model.Language">@HttpUtility.HtmlDecode( @Model.Post )</code></pre>
+<pre>
+    <code class="prettyprint lang-@Model.PasteNote.Language">@HttpUtility.HtmlDecode(@Model.PasteNote.Post)</code>
+</pre>
 
-@Html.ActionLink("View Raw", "Notes", new { id = @Model.Id , mode = "Raw" })
+@Html.ActionLink("View Raw", "Notes", new { id = @Model.PasteNote.Id, mode = "Raw" })
+
+@if (@Model.NoteTags.Count > 0)
+{  
+    <div class="tags">
+        <ul>
+            @foreach (var tag in @Model.NoteTags)
+            {
+                <li>@Html.ActionLink(tag.Name, "TaggedNotes", new { keyword = tag.Name })</li>
+            }
+        </ul>
+    </div>
+}
+
 
 
 @section scripts{
-<script type="text/javascript">
-    prettyPrint();
-</script>
+    <script type="text/javascript">
+        prettyPrint();
+    </script>
 }

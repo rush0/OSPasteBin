@@ -5,7 +5,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace OSPasteBin.DAL
 {
     public class SQLDAL
@@ -19,7 +18,6 @@ namespace OSPasteBin.DAL
         }
 
         #endregion
-
 
         public IDataReader ExecuteQuery(string procedureName, List<SqlParameter> procedureParameters)
         {
@@ -64,6 +62,36 @@ namespace OSPasteBin.DAL
                 if (connection != null) connection.Close();
                 throw;
             }
+        }
+
+        public bool ExecuteBulkCopy(DataTable valueTable, string tableName)
+        {
+            bool success = false;
+
+            try
+            {
+                using (SqlConnection connection = new SqlConnection(_connectionString))
+                {
+                    connection.Open();
+                    using (SqlBulkCopy bulkCopy = new SqlBulkCopy(connection))
+                    {
+                        bulkCopy.ColumnMappings.Add(0, 0);
+                        bulkCopy.ColumnMappings.Add(1, 1);
+
+                        bulkCopy.DestinationTableName = tableName;
+                        bulkCopy.WriteToServer(valueTable);
+
+                        success = true;
+                    }
+                }
+            }
+            catch (Exception)
+            {   
+                throw;
+            }
+
+
+            return success;
         }
     }
 }

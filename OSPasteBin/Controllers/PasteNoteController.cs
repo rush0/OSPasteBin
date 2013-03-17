@@ -7,6 +7,7 @@ using System.Web.Mvc;
 using OSPasteBin.BusinessObjects;
 using OSPasteBin.DAL;
 using System.Configuration;
+using OSPasteBin.Models.ViewModels;
 
 
 namespace OSPasteBin.Controllers
@@ -38,17 +39,22 @@ namespace OSPasteBin.Controllers
         [HttpGet]
         public ActionResult Notes(int id, string mode)
         {
-            PasteNote pasteNote = _dal.GetPasteNote(id);
+
+            NoteViewModel noteViewModel = new NoteViewModel
+            {
+                 PasteNote = _dal.GetPasteNote(id),
+                 NoteTags = _dal.GetTagsForNote(id).ToList<Tag>()
+            };
 
 
-            if (pasteNote == null)
+            if (noteViewModel.PasteNote == null)
                 return View("NotFound");
 
             if (String.Equals(mode, "Raw", StringComparison.CurrentCultureIgnoreCase))
-                return View("Raw", pasteNote);
+                return View("Raw", noteViewModel.PasteNote);
 
 
-            return View("Note", pasteNote);
+            return View("Note", noteViewModel);
         }
 
         /// <summary>
@@ -88,7 +94,7 @@ namespace OSPasteBin.Controllers
         public ActionResult New()
         {
             return View();
-        } 
+        }
         #endregion
 
         #region Actions - POST
@@ -100,22 +106,52 @@ namespace OSPasteBin.Controllers
         [ValidateInput(false)]
         public ActionResult New(PasteNote pasteNote)
         {
+            // Encode Post text
             pasteNote.Post = HttpUtility.HtmlEncode(pasteNote.Post);
 
-            if (User.Identity.IsAuthenticated)
-                pasteNote.UserName = User.Identity.Name;
-            else
-                pasteNote.UserName = string.Empty;
+            // User
+            pasteNote.UserName = (User.Identity.IsAuthenticated) ? User.Identity.Name : string.Empty;
 
-            if (String.IsNullOrEmpty(pasteNote.Title))
-                pasteNote.Title = string.Empty;
+            PasteNote newNote = _dal.AddPasteNote(pasteNote);
 
-            if (String.IsNullOrEmpty(pasteNote.Description))
-                pasteNote.Description = string.Empty;
+            // Tags 
+            // Pushed to a separate table
+            if (!String.IsNullOrEmpty(Request["tags"]))
+                _dal.AddTagsForNote(newNote.Id, ConstructNoteTags(Request["tags"]));
 
-            PasteNote newNote = _dal.AddPostNote(pasteNote);
             return RedirectToAction("Notes", new { id = newNote.Id });
-        } 
+        }
+        #endregion
+
+        #region Utils
+
+        /// <summary>
+        /// Generate a List of <see cref="Tag"/>s from a delimitted string.
+        /// </summary>
+        /// <param name="tags">delimitted string of tags</param>
+        /// <returns>A List Collection of <see cref="Tag"/>s</returns>
+        private List<Tag> ConstructNoteTags(string tags)
+        {
+            string delimitter = ";";
+
+            List<Tag> noteTags = new List<Tag>();
+
+            if (tags.Contains(delimitter))
+            {
+                // Remove trailing ';'
+                if (tags.EndsWith(delimitter))
+                    tags = tags.Substring(0, tags.LastIndexOf(delimitter));
+
+                var tagsCollection = tags.Split(delimitter[0]).Distinct(); // Prevent Duplicates
+
+                foreach (string tag in tagsCollection)
+                    noteTags.Add(new Tag { Name = tag });
+            }
+            else
+                noteTags.Add(new Tag { Name = tags });
+
+            return noteTags;
+        }
         #endregion
     }
 }

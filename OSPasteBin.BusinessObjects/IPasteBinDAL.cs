@@ -9,12 +9,17 @@ namespace OSPasteBin.BusinessObjects
     public interface IPasteBinDAL
     {
         PasteNote GetPasteNote(int id);
-        PasteNote AddPostNote(PasteNote newNote); 
+        PasteNote AddPasteNote(PasteNote newNote); 
+        
         IEnumerable<PasteNote> GetAllPasteNotes();
         IEnumerable<PasteNote> GetPasteNotesWithKeyWord(string keyword);
         IEnumerable<PasteNote> GetRecentPasteNotes(DateTime starting);
         IEnumerable<PasteNote> GetPasteNotesForUser(string username);
-        bool RemovePasteNote(int id);
         
+        IEnumerable<Tag> GetTags();
+        IEnumerable<Tag> GetTagsForNote(int noteId);
+        bool AddTagsForNote(int noteId, List<Tag> noteTags);
+        bool RemovePasteNote(int id);
+
     }
 }

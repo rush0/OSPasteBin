@@ -14,5 +14,6 @@ namespace OSPasteBin.BusinessObjects
         public string Post { get; set; }
         public string Language { get; set; }
         public string UserName { get; set; }
+        public List<Tag> Tags { get; set; }
     }
 }
