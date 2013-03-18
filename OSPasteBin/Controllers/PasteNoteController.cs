@@ -116,8 +116,8 @@ namespace OSPasteBin.Controllers
 
             // Tags 
             // Pushed to a separate table
-            if (!String.IsNullOrEmpty(Request["tags"]))
-                _dal.AddTagsForNote(newNote.Id, ConstructNoteTags(Request["tags"]));
+            if (!String.IsNullOrEmpty(Request["pastenotetags"]))
+                _dal.AddTagsForNote(newNote.Id, ConstructNoteTags(Request["pastenotetags"]));
 
             return RedirectToAction("Notes", new { id = newNote.Id });
         }

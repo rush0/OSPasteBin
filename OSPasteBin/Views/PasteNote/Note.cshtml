@@ -9,7 +9,7 @@
 <p>@Model.PasteNote.Description</p>
 
 <pre>
-    <code class="prettyprint lang-@Model.PasteNote.Language">@HttpUtility.HtmlDecode(@Model.PasteNote.Post)</code>
+<code class="prettyprint lang-@Model.PasteNote.Language">@HttpUtility.HtmlDecode(@Model.PasteNote.Post)</code>
 </pre>
 
 @Html.ActionLink("View Raw", "Notes", new { id = @Model.PasteNote.Id, mode = "Raw" })

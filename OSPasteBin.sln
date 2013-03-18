@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPasteBin.BusinessObjects"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPasteBin.DAL", "OSPasteBin.DAL\OSPasteBin.DAL.csproj", "{7CFF3559-E9D2-4FD6-8ADE-C404E4B1CB03}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OSPasteBin.API", "OSPasteBin.API\OSPasteBin.API.csproj", "{5411BEFA-C8A6-468F-A36A-A6F1C81EA45D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{7CFF3559-E9D2-4FD6-8ADE-C404E4B1CB03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CFF3559-E9D2-4FD6-8ADE-C404E4B1CB03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CFF3559-E9D2-4FD6-8ADE-C404E4B1CB03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5411BEFA-C8A6-468F-A36A-A6F1C81EA45D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5411BEFA-C8A6-468F-A36A-A6F1C81EA45D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5411BEFA-C8A6-468F-A36A-A6F1C81EA45D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5411BEFA-C8A6-468F-A36A-A6F1C81EA45D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -4,29 +4,63 @@
 
 <h2>New</h2>
 
-
-@using (Html.BeginForm("New", "PasteNote")) {
+@using (Html.BeginForm("New", "PasteNote"))
+{
     @Html.ValidationSummary(true)
 
     @Html.Partial("PasteNoteNewEditForm")
     
     <p>
-        <input type="submit" value="Save" />
+        <input id="submitpastenote" type="submit" value="Save" />
     </p>   
 }
 
-<script src="~/Scripts/jquery-1.7.1.min.js"></script>
-<script>
-    /*
-    $('input[type=submit]').click(
+<div id="selectedTags">
+    <ul></ul>
+</div>
+
+@section scripts{
+
+    <script src="~/Scripts/jquery-ui.min.js"></script>
+    <script src="~/Scripts/libs/Tagger/os.tagger.min.js"></script>
+
+
+    <script>
+        // Tags
+        var reqUrl = "/pastebin/api/Tags";
+        $tagContainer = $('#selectedTags ul');
+
+        $("#tagInput").taggable({
+
+            delimmiter: ';',
+
+            tagContainer: $tagContainer,
+
+            reqUrl: reqUrl
+        });
+
+    </script>
+    <script>
+
+        // Submit
+        $('#submitpastenote').click(
             function (e) {
                 e.preventDefault();
 
                 var btn = $(this);
                 var form = btn.closest('form');
-                console.log(form.serialize());
-                form.submit()
-            }
-        );
-    */
-</script>
+
+                // Set Tags
+                var tags = "";
+                $tagContainer.find('li').each(function () {
+                    tags += $(this).text() + ";";
+                });
+
+                $("#pastenotetags").val(tags);
+
+                form.submit();
+            });
+    </script>
+
+}
+
